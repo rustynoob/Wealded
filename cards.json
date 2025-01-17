@@ -1,0 +1,78 @@
+{
+  "cardTypes":[
+    {
+      "type": "item",
+      "backImage": [
+        {"url": "./graphics/large sprites/card.png","x":"0","y":"0","srcWidth":"200","srcHeight":"300","dstWidth":"200","dstHeight":"300"}
+        ],
+     "stats": [
+       {"name":"eat","image":"./graphics/small sprites/drumbstick.png"},
+       {"name":"wear","image":"./graphics/small sprites/coat.png"},
+       {"name":"burn","image":"./graphics/small sprites/fire.png"}
+     ]
+    },
+    {
+      "type": "weather",
+      "backImage": [
+        {"url": "./graphics/large sprites/card.png","x":"0","y":"0","srcWidth":"200","srcHeight":"300","dstWidth":"200","dstHeight":"300"}
+        ],
+     "stats": [
+       {"name":"wind","image":"./graphics/small sprites/wind.png"},
+       {"name":"temp","image":"./graphics/small sprites/snow.png"}
+     ]
+    }
+  ],
+  "cards": [
+    {"name":"cabage","quantity":"2","type":"item","image":"./graphics/large sprites/cabage.png","eat":"3","wear":"1","burn":"1"},
+    {"name":"wheet","quantity":"2","type":"item","image":"./graphics/large sprites/wheet.png","eat":"4","wear":"1","burn":"3"},
+    {"name":"toy bear","quantity":"1","type":"item","image":"./graphics/large sprites/teddyBear.png","eat":"1","wear":"2","burn":"3"},
+    {"name":"spaghetti zeros","quantity":"1","type":"item","image":"./graphics/large sprites/spaghettiZeros.png","eat":"4","wear":"1","burn":"2"},
+      {"name":"socks","quantity":"1","type":"item","image":"./graphics/large sprites/socks.png","eat":"1","wear":"3","burn":"2"},
+      {"name":"shirt","quantity":"1","type":"item","image":"./graphics/large sprites/shirt.png","eat":"2","wear":"4","burn":"2"},
+      {"name":"sheep","quantity":"1","type":"item","image":"./graphics/large sprites/sheep.png","eat":"4","wear":"4","burn":"3"},
+      {"name":"rope","quantity":"1","type":"item","image":"./graphics/large sprites/rope.png","eat":"1","wear":"2","burn":"2"},
+      {"name":"rawhide","quantity":"1","type":"item","image":"./graphics/large sprites/rawhide.png","eat":"2","wear":"2","burn":"1"},
+      {"name":"pinecone","quantity":"1","type":"item","image":"./graphics/large sprites/pinecone.png","eat":"2","wear":"1","burn":"2"},
+      {"name":"peanuts","quantity":"1","type":"item","image":"./graphics/large sprites/peanuts.png","eat":"3","wear":"1","burn":"2"},
+      {"name":"pants","quantity":"1","type":"item","image":"./graphics/large sprites/pants.png","eat":"1","wear":"4","burn":"2"},
+      {"name":"nuts","quantity":"1","type":"item","image":"./graphics/large sprites/nuts.png","eat":"3","wear":"1","burn":"2"},
+      {"name":"newspaper","quantity":"1","type":"item","image":"./graphics/large sprites/newspaper.png","eat":"2","wear":"2","burn":"3"},
+      {"name":"marshmallows","quantity":"1","type":"item","image":"./graphics/large sprites/marshmallows.png","eat":"3","wear":"2","burn":"1"},
+      {"name":"logs","quantity":"1","type":"item","image":"./graphics/large sprites/logs.png","eat":"1","wear":"1","burn":"5"},
+      {"name":"hemp","quantity":"0","type":"item","image":"./graphics/large sprites/hemp.png","eat":"2","wear":"3","burn":"3"},
+      {"name":"goose","quantity":"1","type":"item","image":"./graphics/large sprites/goose.png","eat":"4","wear":"4","burn":"2"},
+      {"name":"fork","quantity":"1","type":"item","image":"./graphics/large sprites/fork.png","eat":"1","wear":"1","burn":"1"},
+      {"name":"drumbstick","quantity":"1","type":"item","image":"./graphics/large sprites/drumbstick.png","eat":"3","wear":"1","burn":"1"},
+      {"name":"cow","quantity":"1","type":"item","image":"./graphics/large sprites/cow.png","eat":"4","wear":"3","burn":"2"},
+      {"name":"cotten candy","quantity":"1","type":"item","image":"./graphics/large sprites/cottenCandy.png","eat":"2","wear":"2","burn":"2"},
+      {"name":"cotten plant","quantity":"1","type":"item","image":"./graphics/large sprites/cotten.png","eat":"1","wear":"3","burn":"3"},
+      {"name":"corn","quantity":"1","type":"item","image":"./graphics/large sprites/cornOnTheCob.png","eat":"4","wear":"2","burn":"2"},
+      {"name":"coconut","quantity":"1","type":"item","image":"./graphics/large sprites/coconut.png","eat":"3","wear":"1","burn":"3"},
+      {"name":"coat","quantity":"1","type":"item","image":"./graphics/large sprites/coat.png","eat":"1","wear":"5","burn":"3"},
+      {"name":"chicken","quantity":"1","type":"item","image":"./graphics/large sprites/chicken.png","eat":"4","wear":"2","burn":"3"},
+      {"name":"cheese","quantity":"1","type":"item","image":"./graphics/large sprites/cheese.png","eat":"4","wear":"1","burn":"1"},
+      {"name":"candy","quantity":"1","type":"item","image":"./graphics/large sprites/candy.png","eat":"3","wear":"1","burn":"1"},
+      {"name":"butter","quantity":"1","type":"item","image":"./graphics/large sprites/butter.png","eat":"3","wear":"1","burn":"2"},
+      {"name":"bread","quantity":"1","type":"item","image":"./graphics/large sprites/bread.png","eat":"4","wear":"2","burn":"3"},
+      {"name":"branch","quantity":"1","type":"item","image":"./graphics/large sprites/branch.png","eat":"1","wear":"1","burn":"3"},
+      {"name":"boots","quantity":"1","type":"item","image":"./graphics/large sprites/boots.png","eat":"2","wear":"4","burn":"2"},
+      {"name":"books","quantity":"1","type":"item","image":"./graphics/large sprites/books.png","eat":"2","wear":"2","burn":"4"},
+      {"name":"blanket","quantity":"1","type":"item","image":"./graphics/large sprites/blanket.png","eat":"1","wear":"4","burn":"3"},
+      {"name":"belt","quantity":"1","type":"item","image":"./graphics/large sprites/belt.png","eat":"2","wear":"2","burn":"1"},
+      {"name":"beehive","quantity":"1","type":"item","image":"./graphics/large sprites/beehive.png","eat":"4","wear":"1","burn":"3"},
+      {"name":"bamboo","quantity":"1","type":"item","image":"./graphics/large sprites/bamboo.png","eat":"3","wear":"3","burn":"4"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"1","temp":"-1"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"1","temp":"-1"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"1","temp":"-2"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"1","temp":"-3"},
+      {"name":"weather","quantity":"1","type":"weather","image":"./graphics/large sprites/weather.png","wind":"1","temp":"-4"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"2","temp":"-1"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"2","temp":"-2"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"2","temp":"-3"},
+      {"name":"weather","quantity":"1","type":"weather","image":"./graphics/large sprites/weather.png","wind":"2","temp":"-4"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"3","temp":"-1"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"3","temp":"-2"},
+      {"name":"weather","quantity":"2","type":"weather","image":"./graphics/large sprites/weather.png","wind":"3","temp":"-3"}  ,
+      {"name":"weather","quantity":"1","type":"weather","image":"./graphics/large sprites/weather.png","wind":"3","temp":"-4"}
+  ]
+}
