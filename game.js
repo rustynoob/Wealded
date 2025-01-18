@@ -183,11 +183,11 @@ const snowFlake = new Particle({x:0,y:0},{x:0,y:1},{x:0,y:0},{x:0,y:1},false,1,1
 
 snow.addComponent(new Component("table"));
 snow.addComponent(new TransformComponent(0,0,0));
-snow.addComponent(new ParticleTypeComponent("snow", dustUpdate, new ScaledSpriteComponent("./graphics/small sprites/snow.png",16,16,64,64,32,32,0),snowFlake));
+snow.addComponent(new ParticleTypeComponent("snow", dustUpdate, new ScaledSpriteComponent("./graphics/small sprites/heart.png",16,16,64,64,32,32,0),snowFlake));
 game.addEntity(snow);
 
 const snowMachine = new ParticleEmitterComponent(0.003, "snow", {x:0,y:0}, [{x:-100,y:-100},{x:1650,y:-100},{x:1650,y:750},{x:1550,y:750},{x:1550,y:0},{x:0,y:0},{x:0,y:750},{x:-100,y:750}],20000);
-snow.addComponent(snowMachine);
+//snow.addComponent(snowMachine);
 
 
 // game code
@@ -248,11 +248,7 @@ class Stat extends Component{
 
 
 class Card extends Entity{
-  constructor(type = "item",name = "Card", image = "./graphics/large sprites/cabage.png",stats = (type == "item"?{
-    eat:{value:Math.floor(Math.random()*7-2)},
-    wear:{value:Math.floor(Math.random()*6-2)},
-    burn:{value:Math.floor(Math.random()*5)}
-    }:{wind:{value:Math.floor(Math.random()*4)},temp:{value:Math.floor(Math.random()*7-5)}})){
+  constructor(type = "item",name = "Card", image = "./graphics/large sprites/cabage.png",stats){
     super("card");
     this.name =  new WordWrappedTextComponent(name,"sans-serif",32,"black","right",-190,-30,200);
     this.type = type;
@@ -1009,8 +1005,8 @@ class StatBar extends Component{
     ctx.restore();
   }
 }
-const player = new Player()
-game.addEntity(player);
+//const player = new Player()
+//game.addEntity(player);
 
 let startGame = new Tutorial(1100,500,new ScaledSpriteComponent("./graphics/large sprites/right.png",0,0,256,256,256,256));
 
@@ -1020,7 +1016,7 @@ let die = new Popup(1340,98,new MultiRenderComponent(0,0,[new PolygonComponent([
 
 let intro = new Popup(20,20,new MultiRenderComponent(0,0,[
   new PolygonComponent([{x:-20,y:-20},{x:1550,y:-20},{x:1550,y:800},{x:-20,y:800}],"rgba(200,200,200,0.7)","transparent",10),
-  new WordWrappedTextComponent("Winter has arrived. You must survive using the items you scavenge. Each item may be eaten, worn or burned to help you survive the bitter cold.","sans-serif",32,"rgb(100,0,0)","center",-757,-350,1400), new WordWrappedTextComponent("Eat-Wear-Burn was written and designed by Be Creative. Art by CRC. Music by  Snowyninja. Many thanks to all our friends and family for testing and invaluble feedback.","sans-serif",28,"rgb(20,40,100)","center",-757,-700,1400),
+  new WordWrappedTextComponent("Hold on a second. None of this makes sense. This is for a different game","sans-serif",32,"rgb(100,0,0)","center",-757,-350,1400), new WordWrappedTextComponent("Eat-Wear-Burn was written and designed by Be Creative. Art by CRC. Music by  Snowyninja. Many thanks to all our friends and family for testing and invaluble feedback.","sans-serif",28,"rgb(20,40,100)","center",-757,-700,1400),
   new WordWrappedTextComponent("Winter lasts 3 months. Each months is 4 weeks. At the start of each month draw 12 cards from the item pile into your hand and flip one weather card from the weather draw pile onto the active weather pile.","sans-serif",24,"rgb(100,0,0)","left",-30,-450,400),
     new WordWrappedTextComponent("Each week play cards from your hand to the Eat, Wear, and Burn piles. Each pile may contain up to three cards. you may play as many cards as you want in a turn but be careful because you won't get any new cards until the end of the month.","sans-serif",24,"rgb(100,0,0)","left",-430,-450,350),
     new WordWrappedTextComponent("Once you are satisfied with your choices each pile is resolved in the order Eat, Wear, Burn and then the health tracker is adjusted based on the hunger and temperature trackers. If at any time your health reaches the bottom slot of the health bar you die.","sans-serif",24,"rgb(100,0,0)","left",-800,-450,350),
@@ -1071,83 +1067,64 @@ function helpCallback(caller, event){
 game.addEntity(new Help());
 
 //player.zoom();
-const top = 50;
-const bot = 400;
+const offscreen = 20;
+
+const top = 340;
+const bot = 660;
 const row1 = 40;
-const row2 = 340;
-const row3 = 640;
-const row4 = 800;
-const row5 = 1050;
+const row2 = 260;
+const row3 = 480;
+const row4 = 780;
+const row5 = 1200;
 const row6 = 1300;
 
-let itemDraw = new CardCollection(row4,bot,200,300,"Item Draw")
-let itemDiscard = new CardCollection(row5,top,200,300,"Item Discard","item")
-let itemHand = new CardCollection(row1,bot,728,300,"Hand","item",{x:48,y:0},12)
-let itemEat = new CardCollection(row1,top,260,300,"Eat","item",{x:30,y:0},3)
-let itemWear = new CardCollection(row2,top,260,300,"Wear","item",{x:30,y:0},3)
-let itemBurn = new CardCollection(row3,top,260,300,"Burn","item",{x:30,y:0},3)
+let wielder = new CardCollection(row1,top,200,300,"Wielder","fighter",{x:0,y:0},1)
+let playArea = new CardCollection(row2,top,500,300,"Play","parts",{x:48,y:0})
+let oponentWeapon = new CardCollection(row4,top,500,300,"Oponent Weapon","item",{x:40,y:0})
+let oponent = new CardCollection(row6,top,200,300,"Oponent","fighter",{x:0,y:0},1)
+let fighterDiscard = new CardCollection(row1,bot,200,300,"Fighter Discard","fighter")
+let hand = new CardCollection(row2,bot,500,300,"Hand","parts",{x:48,y:0},4);
+let resources = new CardCollection(row4,bot,400,150,"Resources","resource",{x:30,y:0})
+let souls = new CardCollection(row5,bot,300,300,"Souls","fighter",{x:10,y:0},10)
+let part = new CardCollection(row3,offscreen,200,300,"Parts","part");
+let partDiscard = new CardCollection(row1,offscreen,200,300,"Parts Discard","parts")
+let bank = new CardCollection(row4,offscreen,700,150,"Bank","resource",{x:10,y:0})
+let fighters = new CardCollection(row2,offscreen,200,300,"Fighters","fighter")
+
+part.locked = true;
+partDiscard.locked = true;
+playArea.locked = true;
+bank.locked = true;
+fighters.locked = true;
+wielder.locked = true;
+oponent.locked = true;
+oponentWeapon.locked = true;
+souls.locked = true;
+fighterDiscard.locked = true;
+
+part.target = {stack:hand,count:-3,shuffel:false};
+hand.target = {stack:partDiscard,count:0,shuffel:false};
+partDiscard.target = {stack:part,count:0,shuffel:true};
+playArea.target = {stack:partDiscard,count:0,shuffel:false};
+resources.target = {stack:bank,count:0,shuffel:false};
+bank.target = {stack:bank,count:0,shuffel:false};
+fighters.target = {stack:fighters,count:0,shuffel:false};
+wielder.target = {stack:fighters,count:0,shuffel:false};
+oponent.target = {stack:fighters,count:0,shuffel:false};
+oponentWeapon.target = {stack:part,count:0,shuffel:false};
+souls.target = {stack:fighters,count:0,shuffel:false};
+fighterDiscard.target = {stack:fighters,count:0,shuffel:false};
 
 
-let weatherDraw = new CardCollection(row5-40,bot,200,300,"Weather Draw","weather")
-let weatherActive = new CardCollection(row6-70,bot,320,300,"Active Weather","weather",{x:40,y:0},4)
-let weatherDiscard = new CardCollection(row6,top,200,300,"Weather Discard","weather")
-
-//itemBurn.addComponent(new ParticleEmitterComponent(.1, "dust",{x:0,y:0},itemBurn.shape));
-
-itemDiscard.locked = true;
-weatherDiscard.locked = true;
-itemDraw.locked = true;
-
-itemDraw.target = {stack:itemHand,count:-12,shuffel:false};
-itemDiscard.target = {stack:itemDraw ,count:0,shuffel:true};
-itemHand.target = {stack:itemDiscard,count:0,shuffel:false};
-itemEat.target = {stack:itemDiscard,count:0,shuffel:false};
-itemWear.target = {stack:itemDiscard,count:0,shuffel:false};
-itemBurn.target = {stack:itemDiscard,count:0,shuffel:false};
+part.face = "down";
+bank.face = "down";
+fighters.face = "down";
 
 
 
-weatherDraw.target = {stack:weatherActive,count:1,shuffel:false};
-weatherActive.target = {stack:weatherDiscard,count:0,shuffel:false};
-weatherDiscard.target = {stack:weatherDraw,count:0,shuffel:true};
-
-itemDraw.face = "down";
-weatherDraw.face = "down";
 
 
-itemDiscard.userAction = function (){
-  for(let card of this.cards){
-    card.played = false;
-  }
-}
-itemEat.userAction = function(){return true;};
-itemWear.userAction = function(){return true;};
-itemBurn.userAction = function(){return true;};
-itemWear.userAction = function(){return weatherDiscard.cards.length < 12}
-itemHand.userAction = function(){return weatherDiscard.cards.length < 12}
-itemDraw.userAction = function(){weatherDraw.activate(); return true;}
-
-itemEat.cardAdded = function(card){player.updateEat(card.stats.eat.value)}
-itemWear.cardAdded = function(card){player.updateWear(card.stats.wear.value)}
-itemBurn.cardAdded = function(card){player.updateBurn(card.stats.burn.value)}
-itemDraw.cardAdded = function(card){card.played = false;}
-itemDraw.removeCardHook = function(card){  return this.locked; }
-itemEat.cardRemoved = function(card){player.updateEat(-card.stats.eat.value)}
-itemWear.cardRemoved = function(card){player.updateWear(-card.stats.wear.value)}
-itemBurn.cardRemoved = function(card){player.updateBurn(-card.stats.burn.value)}
-itemEat.addCardHook = function(card){
-  return (this.cards.length >= 3);
-}
-itemWear.addCardHook = function(card){
-  return (this.cards.length >= 3);
-}
-itemBurn.addCardHook = function(card){
-  return (this.cards.length >= 3);
-}
-itemHand.addCardHook = function(card){
-  return (card.played);
-}
-itemHand.cardRemoved = function(card){
+hand.cardRemoved = function(card){
   startGame.hide();
   playCards.hide();
 
@@ -1157,102 +1134,6 @@ itemHand.cardRemoved = function(card){
 }
 
 
-
-
-weatherActive.userAction = function(){
-  if( this.cards.length < 4){
-    return true
-  }
-  player.wind.set(0);
-  player.cold.set(0)
-  // player.reset();
-  //itemDraw.activate();
-
-}
-
-weatherActive.addCardHook = function(card){
-  player.hunger.setRelative( player.eat.get()+player.temp.get("hunger"));
-  player.temp.setRelative((((Math.max(1,player.wind.get()-player.wear.get())*player.cold.get())+player.burn.get()))+player.hunger.get("temp"));
-  player.health.setRelative(player.temp.get("health")+player.hunger.get("health"));
-
-  itemDiscard.locked = false;
-  itemEat.manAct();
-  itemBurn.manAct();
-  itemDiscard.locked = true;
-
-  for(let card of itemWear.cards){
-    card.played = true;
-  }
-
-
-  if(this.cards.length <= 0){
-    itemDraw.locked = false;
-    itemDraw.manAct();
-    itemDraw.locked = true;
-    player.reset();
-  }
-  if(player.health.get("dead")){
-    // reset the game;
-    gameOver();
-    die.show();
-    return true;
-  }
-
-  if(!this.cards.includes(card) && this.cards.length >= 4 ){
-    weatherDiscard.locked = false;
-    this.activate();
-    weatherDiscard.locked = true;
-    itemDraw.locked = false;
-    itemDraw.manAct();
-    itemDraw.locked = true;
-    if(weatherDiscard.activate()){
-      playCards.hide();
-      startGame.hide();
-      startGame.trigger(20000);
-      return true;
-    }
-    //return true;
-  }
-  else{
-     playCards.hide();
-      startGame.hide();
-    playCards.trigger(20000);
-    startGame.trigger(60000);
-  }
-}
-weatherActive.cardAdded = function(card){
-  player.update(card.stats.wind.value,card.stats.temp.value);
-}
-weatherActive.cardRemoved = function(card){
- // weather.update(-card.stats.value.wind,-card.stats.value.temp);
-}
-
-
-weatherDiscard.addCardHook = function(){
-  return this.locked;
-}
-itemDiscard.addCardHook = function(){
-  return this.locked;
-}
-
-weatherDiscard.userAction = function(){
-  if(this.cards.length < 12){
-    return true;
-  }
-  itemDiscard.locked = false;
-  weatherDiscard.locked = false;
-  itemEat.manAct();
-  itemBurn.manAct();
-  itemWear.manAct();
-  itemHand.manAct();
-  itemDiscard.manAct();
-  if(!player.health.get("dead")){
-    live.show();
-  }
-  itemDiscard.locked = true;
-  weatherDiscard.locked = true;
-
-}
 function gameOver(){
   itemDiscard.locked = false;
   weatherDiscard.locked = false;
@@ -1267,16 +1148,20 @@ function gameOver(){
   itemDiscard.locked = true;
   //player.zoom()
 }
-game.addEntity(itemDraw);
-game.addEntity(itemDiscard);
-game.addEntity(itemHand);
-game.addEntity(itemEat);
-game.addEntity(itemWear);
-game.addEntity(itemBurn);
-game.addEntity(weatherDraw);
-game.addEntity(weatherActive);
-game.addEntity(weatherDiscard);
 
+
+game.addEntity(part)
+game.addEntity(hand)
+game.addEntity(partDiscard)
+game.addEntity(playArea)
+game.addEntity(resources)
+game.addEntity(bank)
+game.addEntity(fighters)
+game.addEntity(wielder)
+game.addEntity(oponent)
+game.addEntity(oponentWeapon)
+game.addEntity(souls)
+game.addEntity(fighterDiscard)
 
 let cardList = [];
 fetch('cards.json')
@@ -1287,7 +1172,8 @@ fetch('cards.json')
     data.cardTypes.forEach(cardType => {
       cardTypes[cardType.type] = {
         backImage: cardType.backImage,
-        stats:{}
+        stats:{},
+        color: cardType.color
       };
       cardType.stats.forEach(stat => {
         cardTypes[cardType.type].stats[stat.name] = stat.image;
@@ -1313,9 +1199,12 @@ fetch('cards.json')
       return cardData;
     });
     // the cards are now stored in the cards object
+
     for(let card of cards){
       for(let i = 0; i < card.quantity; i++){
         let c = new Card(card.type, card.name, card.image,card.stats);
+        let backimage = cardTypes[card.type].backImage[0];
+        c.back = new MultiRenderComponent(0,0,[new PolygonComponent([{x:0,y:0},{x:200,y:0},{x:200,y:300},{x:0,y:300}],cardTypes[card.type].color,"brown",1),new ScaledSpriteComponent(backimage.url,backimage.x,backimage.y,backimage.srcWidth,backimage.srcHeight,backimage.dstWidth,backimage.dstHeight)])
         game.addEntity(c);
         cardList.push(c);
         c.addComponent(new TimerComponent(2000,initCard));
@@ -1325,16 +1214,19 @@ fetch('cards.json')
   });
 
 function initCard(c){
-  //for (let c of cardList){
-    if(c.type == "item"){
-      itemDraw.addCard(c);
-      itemDraw.shuffel();
+
+    if(c.type == "part"){
+      part.addCard(c);
+      part.shuffel();
     }
-    else{
-      weatherDraw.addCard(c);
-      weatherDraw.shuffel();
+    else if(c.type == "fighter"){
+      fighters.addCard(c);
+      fighters.shuffel();
       }
-  //}
+      else{
+         bank.addCard(c);
+      bank.shuffel();
+      }
 }
 
 
