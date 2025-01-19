@@ -33,7 +33,7 @@ const getMobileOS = () => {
 
 
 export const game = new Game("Eat Wear Burn",document.getElementById("canvas"));
-
+game.background = "rgb(10,20,10)"
 
 const eventList = [{key:"Digit1",id:"systems"},{key:"Backquote",id:"overlay"},{key:"Digit2",id:"component"},{key:"Digit3",id:"entities"},{key:"Digit4",id:"particles"},{key:"Digit5",id:"collisions"},{key:"KeyW",id:"up"},{key:"ArrowUp",id:"up"},{key:"KeyS",id:"down"},{key:"ArrowDown",id:"down"},{key:"KeyA",id:"left"},{key:"ArrowUp",id:"left"},{key:"KeyD",id:"right"},{key:"ArrowRight",id:"right"},{key:"Space",id:"select"},{key:"Enter",id:"enter"}]
 const uii = new UISystem(eventList);
@@ -42,10 +42,10 @@ game.addSystem(uii,0);
 game.addSystem(new ParticleSystem(),0);
 game.addSystem(new AnimationSystem(),0);
 game.addSystem(new RenderSystem(game),0);
-game.addSystem(new CollisionSystem(), 3)
+//game.addSystem(new CollisionSystem(), 3)
 game.addSystem(new TimerSystem(),2)
 const jukeBox = new Entity("system");
-jukeBox.addComponent(new CameraComponent("table",0,0,10,1550,750,.25));
+jukeBox.addComponent(new CameraComponent("table",0,0,10,1550,1000,.25));
 jukeBox.addComponent(new TransformComponent())
 
 game.addEntity(jukeBox);
@@ -123,7 +123,7 @@ class Fader extends Entity{
     this.ui.regesterCallback("pointer",this.setlevel.bind(this));
     this.addComponent(this.ui);
     this.addComponent(new Handle(this.audio, this.width, this.height))
-    this.audio.volume = 0.5;
+    this.audio.volume = 0.2;
     this.addComponent(new Component("table"));
 
 
@@ -245,50 +245,31 @@ class Stat extends Component{
 }
 
 
-
+let hoveredStack = false;
 
 class Card extends Entity{
   constructor(type = "item",name = "Card", image = "./graphics/large sprites/cabage.png",stats){
     super("card");
-    this.name =  new WordWrappedTextComponent(name,"sans-serif",32,"black","right",-190,-30,200);
+    this.name =  name;
     this.type = type;
     this.stack = false;
     this.side = "up";
-    this.shape = [{x:0,y:0},{x:200,y:0},{x:200,y:300},{x:0,y:300}];
+    this.width = 200;
+    this.height = 300;
+    this.shape = [{x:0,y:0},{x:this.width,y:0},{x:this.width,y:this.height},{x:0,y:this.height}];
     this.selected = false;
     this.pointer = {x:0,y:0,clicks:0,time:Date.now()};
     this.stats = stats;
     let i = 0;
+    this.image = image;
     for (const key in stats) {
       stats[key].position = i++;
     }
 
     //`rgb(${Math.random()*123},${Math.random()*123},${Math.random()*123})`
 
-    this.face =  (type == "item"?new MultiRenderComponent(0,0,[
-        new PolygonComponent(this.shape,"rgb(200,200,100)","brown",1),
-        new ScaledSpriteComponent(image,-5,-50,256,256,180,180, 0),
-        new PolygonComponent(this.shape,"transparent","brown",8),
-        this.stats.eat,
-        this.stats.wear,
-        this.stats.burn
-      ]):new MultiRenderComponent(0,0,[
-        new PolygonComponent(this.shape,"rgb(10,80,125)","darkblue",1),
-        new ScaledSpriteComponent(image,-5,-50,256,256,180,180, 0),
-        new PolygonComponent(this.shape,"transparent","darkblue",8),
-        this.stats.wind,
-        this.stats.temp
-      ]));
-    this.back =
-      (type == "item")?(new MultiRenderComponent(0,0,[
-       new PolygonComponent(this.shape,"rgb(150,150,50)","brown",1),
-        new WordWrappedTextComponent(this.type,"sans-serif",32,"rgb(255,255,200)","right",-190,-30,200)
-      ]))
-      :(new MultiRenderComponent(0,0,[
-        new PolygonComponent(this.shape,"rgb(50,50,155)","darkblue",1),
-        new WordWrappedTextComponent(this.type,"sans-serif",32,"rgb(200,200,255)","right",-190,-30,200)
-      ])
-    );
+    this.face =  new MultiRenderComponent(0,0,[new PolygonComponent(this.shape,"rgb(200,200,100)","brown",1)]);
+    this.back =  new MultiRenderComponent(0,0,[new PolygonComponent(this.shape,"rgb(150,150,50)","brown",1)]);
     this.addComponent(this.back);
     this.addComponent(new TransformComponent((Math.random())*500+2000,(Math.random())*900,Math.random(),(Math.random()-0.5)*3));
 
@@ -299,7 +280,7 @@ class Card extends Entity{
     let collision = new CollisionComponent(this.shape);
     this.addComponent(collision);
 
-    collision.registerCallback("held",cardOnCard)
+  //  collision.registerCallback("held",cardOnCard)
 
     this.ui = new UIComponent()
     this.addComponent(this.ui);
@@ -406,9 +387,8 @@ class Card extends Entity{
             else{
               resetClick(caller);
             }
+            // set the
           }
-
-
           break;
         case "move":
           this.zooming = false;
@@ -429,14 +409,19 @@ class Card extends Entity{
 }
 function resetClick(entity){
   entity.selected = false;
-  entity.addComponent(new Component("held"));
+  if(hoveredStack){
+    setStack(entity,hoveredStack);
+  }
+  else{
+    entity.stack.arrangeCards();
+  }
+
 
 }
 
 
 function setStack(card, target){
   if(!card.selected){
-    card.removeComponent("held");
     if(card.type == target.type){
       if(card.target != target){
          target.addCard(card);
@@ -447,6 +432,9 @@ function setStack(card, target){
   }
 }
 function cardInHand(self,other){
+  const myTransform = self.getComponent("transform");
+  const theirTransform = other.getComponent("transform");
+  theirTransform.z = Math.max(myTransform.z+self.cards.length,theirTransform.z)+1;
   setStack(other,self);
 }
 function cardOnCard(self,other){
@@ -465,6 +453,8 @@ class CardCollection extends Entity{
     this.type = type;
     this.spacing = spacing;
     this.max = max;
+    this.width = width;
+    this.height = height;
     this.shape =  [{x:0,y:0},{x:width,y:0},{x:width,y:300},{x:0,y:300}];
     this.target = {stack:this,count:0,shuffel:false};
     this.face = "up";
@@ -477,19 +467,20 @@ class CardCollection extends Entity{
       let lineX = 200+((width-200)/(max-1)*i);
       this.render.push(new LineComponent(background,2,0,0,lineX,0,lineX,300))
     }
-    this.addComponent(new MultiRenderComponent(0,0,this.render));
+    this.addComponent(new MultiRenderComponent(0,0,this.render,this.width+1,this.height+1));
     this.addComponent(new TransformComponent(x,y,-Math.random()));
     this.addComponent(new Component("table"));
     this.addComponent(new Component("hand"));
     this.addComponent(new CollisionComponent(this.shape));
- //   let ui = new UIComponent()
-  //  this.addComponent(ui);
+    this.ui = new UIComponent()
+    this.addComponent(this.ui);
     let collision = new CollisionComponent(this.shape);
     this.addComponent(collision);
-    collision.registerCallback("held",cardInHand)
-  //  ui.regesterCallback("pointer",this.uiCallback);
+  //  collision.registerCallback("held",cardInHand)
+    this.ui.regesterCallback("pointer",this.uiCallback.bind(this));
   }
   uiCallback(caller, event){
+    const transform = this.getComponent("transform");
     switch(event.action){
       case "down":
 
@@ -498,6 +489,14 @@ class CardCollection extends Entity{
 
         break;
       case "move":
+        if(pointInPolygon({x:event.x-transform.x,y:event.y-transform.y},this.shape)){
+          hoveredStack = this;
+        }
+        else {
+          if(hoveredStack == this){
+            hoveredStack = false;
+          }
+        }
         break;
       default:
 
@@ -530,14 +529,17 @@ class CardCollection extends Entity{
     let stackTransform = this.getComponent("transform");
     const xyJitter = 4;
     const rJitter = 0.03;
+    if(this.cards.length <= 0){
+      return;
+    }
+    const xOffset = (this.width-this.cards[0].width)/Math.max(1,(this.cards.length-1));
+    const yOffset = (this.height-this.cards[0].height)/Math.max(1,(this.cards.length-1));
     for(let i = 0; i < this.cards.length; i++){
       if(!this.cards[i].selected){
         const cardTransform = this.cards[i].getComponent("transform");
-        if(
-          cardTransform.z != i+stackTransform.z+1
-        ){
-          this.cards[i].addComponent(new AnimationComponent(cardTransform,new TransformComponent(stackTransform.x+(i*this.spacing.x)-(Math.random()*xyJitter),stackTransform.y+(i*this.spacing.y)-(Math.random()*xyJitter),stackTransform.z+i+1,(Math.random()-0.5)*rJitter),1000))
-        }
+        //if(cardTransform.z != i+stackTransform.z+1 ){
+          this.cards[i].addComponent(new AnimationComponent(cardTransform,new TransformComponent(stackTransform.x+(i*xOffset)-(Math.random()*xyJitter),stackTransform.y+(i*yOffset)-(Math.random()*xyJitter),stackTransform.z+i+1,(Math.random()-0.5)*rJitter),1000))
+        //}
       }
     }
   }
@@ -1079,16 +1081,16 @@ const row5 = 1200;
 const row6 = 1300;
 
 let wielder = new CardCollection(row1,top,200,300,"Wielder","fighter",{x:0,y:0},1)
-let playArea = new CardCollection(row2,top,500,300,"Play","parts",{x:48,y:0})
-let oponentWeapon = new CardCollection(row4,top,500,300,"Oponent Weapon","item",{x:40,y:0})
+let playArea = new CardCollection(row2,top,500,300,"Play","part",{x:48,y:0})
+let oponentWeapon = new CardCollection(row4,top,500,300,"Oponent Weapon","part",{x:40,y:0})
 let oponent = new CardCollection(row6,top,200,300,"Oponent","fighter",{x:0,y:0},1)
 let fighterDiscard = new CardCollection(row1,bot,200,300,"Fighter Discard","fighter")
-let hand = new CardCollection(row2,bot,500,300,"Hand","parts",{x:48,y:0},4);
-let resources = new CardCollection(row4,bot,400,150,"Resources","resource",{x:30,y:0})
+let hand = new CardCollection(row2,bot,500,300,"Hand","part",{x:48,y:0},4);
+let resources = new CardCollection(row4,bot,400,300,"Resources","resource",{x:30,y:0})
 let souls = new CardCollection(row5,bot,300,300,"Souls","fighter",{x:10,y:0},10)
 let part = new CardCollection(row3,offscreen,200,300,"Parts","part");
-let partDiscard = new CardCollection(row1,offscreen,200,300,"Parts Discard","parts")
-let bank = new CardCollection(row4,offscreen,700,150,"Bank","resource",{x:10,y:0})
+let partDiscard = new CardCollection(row1,offscreen,200,300,"Parts Discard","part")
+let bank = new CardCollection(row4,offscreen,700,300,"Bank","resource",{x:10,y:0})
 let fighters = new CardCollection(row2,offscreen,200,300,"Fighters","fighter")
 
 part.locked = true;
@@ -1101,6 +1103,9 @@ oponent.locked = true;
 oponentWeapon.locked = true;
 souls.locked = true;
 fighterDiscard.locked = true;
+resources.locked - true;
+
+
 
 part.target = {stack:hand,count:-3,shuffel:false};
 hand.target = {stack:partDiscard,count:0,shuffel:false};
@@ -1117,7 +1122,7 @@ fighterDiscard.target = {stack:fighters,count:0,shuffel:false};
 
 
 part.face = "down";
-bank.face = "down";
+//bank.face = "down";
 fighters.face = "down";
 
 
@@ -1163,7 +1168,7 @@ game.addEntity(oponentWeapon)
 game.addEntity(souls)
 game.addEntity(fighterDiscard)
 
-let cardList = [];
+
 fetch('cards.json')
   .then(response => response.json())
   .then(data => {
@@ -1186,16 +1191,27 @@ fetch('cards.json')
         name: card.name,
         quantity: card.quantity,
         type: card.type,
+        rating: card.rating,
         image:card.image,
-        stats: {}
+        stats: {},
+        conversions: card.conversions
       };
 
       Object.keys(cardTypes[card.type].stats).forEach(stat => {
-        cardData.stats[stat] = new Stat(parseInt(card[stat],10),cardTypes[card.type].stats[stat]);//  new Image()
+        if(card[stat]){
 
+          cardData.stats[stat] = new Stat(parseInt(card[stat],10),cardTypes[card.type].stats[stat]);//  new Image()
+        }
 
 
       });
+      if(card.cost){
+        cardData.cost = card.cost;
+      }
+      if(card.draw){
+        cardData.draw = card.draw;
+      }
+
       return cardData;
     });
     // the cards are now stored in the cards object
@@ -1204,9 +1220,33 @@ fetch('cards.json')
       for(let i = 0; i < card.quantity; i++){
         let c = new Card(card.type, card.name, card.image,card.stats);
         let backimage = cardTypes[card.type].backImage[0];
-        c.back = new MultiRenderComponent(0,0,[new PolygonComponent([{x:0,y:0},{x:200,y:0},{x:200,y:300},{x:0,y:300}],cardTypes[card.type].color,"brown",1),new ScaledSpriteComponent(backimage.url,backimage.x,backimage.y,backimage.srcWidth,backimage.srcHeight,backimage.dstWidth,backimage.dstHeight)])
+        const background = new PolygonComponent([{x:0,y:0},{x:200,y:0},{x:200,y:300},{x:0,y:300}],cardTypes[card.type].color,"brown",1);
+        c.back = new MultiRenderComponent(0,0,[
+          background,
+          new ScaledSpriteComponent(backimage.url,backimage.x,backimage.y,backimage.srcWidth,backimage.srcHeight,backimage.dstWidth,backimage.dstHeight),
+
+        ]);
+
+        c.rating = card.rating
+        c.face = new MultiRenderComponent(0,0,[
+          background,
+          new ScaledSpriteComponent(c.image,0,0,256,256,200,200),
+          new WordWrappedTextComponent(c.name,"sans-serif",24,"black","center",-100,-30,100),
+          new WordWrappedTextComponent(c.rating,"sans-serif",24,"black","center",-175,-30,100)
+         // new MultiRenderComponent(0,0,[stats]),
+          //new MultiRenderComponent(0,150,[conversions]),
+          //cost
+        ])
+
+         for (const key in c.stats) {
+           c.face.add(c.stats[key]);
+         }
+
+         if(card.conversions){
+           c.conversons = card.conversions;
+        }
+
         game.addEntity(c);
-        cardList.push(c);
         c.addComponent(new TimerComponent(2000,initCard));
      //   c.flip("up")
       }

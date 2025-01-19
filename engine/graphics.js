@@ -45,20 +45,55 @@ export class RenderComponent extends Component {
 }
 
 export class MultiRenderComponent extends RenderComponent {
-  constructor(x,y, components) {
+  constructor(x,y, components,width = 200,height = 300) {
     super("render");
     this.x = x;
     this.y = y;
+    this.padding = 10;
+    this.width = width;
+    this.height = height;
     this.components = components;
+    this.buffer  = document.createElement('canvas');
+    this.preRenderctx = this.buffer.getContext('2d');
+    this.image = {complete: false,onload: () => {return false;}};
+    this.prerender();
+
+
+
+  }
+  prerender(){
+   this.buffer.width = this.width+(this.padding*2);
+   this.buffer.height = this.height+(this.padding*2);
+   let dirty = false;
+   for(const component of this.components){
+
+     if(!component.image || (component.image.width > 0 && component.image.height > 0)){
+       component.draw(this.preRenderctx, new TransformComponent(+this.padding,+this.padding));
+     }
+     else{
+       dirty = true;
+     }
+    }
+    this.image.complete = !dirty;
+    if(this.image.complete){
+        this.image.onload();
+    }
+  }
+  add(component){
+    this.components.push(component);
+    this.image.complete = false;
+    this.prerender();
   }
   draw(ctx, transform, dt){
+    if(!this.image.complete){
+      this.prerender();
+    }
     ctx.save();
     ctx.translate(transform.x-this.x, transform.y-this.y);
     ctx.rotate(transform.rotation);
     ctx.scale(transform.scale, transform.scale);
-    for(const component of this.components){
-
-      component.draw(ctx, new TransformComponent(),dt);
+    if(this.buffer.width > 0 && this.buffer.height > 0){
+      ctx.drawImage(this.buffer, this.x-this.padding, this.y-this.padding);
     }
 
     ctx.restore();
@@ -71,7 +106,10 @@ export class EntityRenderComponent extends RenderComponent {
     this.x = x;
     this.y = y;
     this.entities = entities;
+
   }
+
+
   draw(ctx, transform, dt){
     ctx.save();
       ctx.translate(transform.x-this.x, transform.y-this.y);
